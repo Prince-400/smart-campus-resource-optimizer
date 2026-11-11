@@ -62,3 +62,19 @@ void BookingManager::displayAllBookings() const {
 int BookingManager::getTotalBookings() const {
     return static_cast<int>(bookings.size());
 }
+
+
+bool BookingManager::hasConflict(
+    const string& roomId,
+    int startTime,
+    int endTime
+) {
+    vector<Booking> conflicts =
+        bookingTree.searchOverlaps(
+            roomId,
+            startTime,
+            endTime
+        );
+
+    return !conflicts.empty();
+}

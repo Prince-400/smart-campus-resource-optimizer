@@ -7,6 +7,9 @@
 
 #include "RoomManager.h"
 #include "BookingManager.h"
+#include "AllocationRequest.h"
+#include "PriorityQueue.h"
+#include "ResourceAllocator.h"
 
 using namespace std;
 
@@ -39,6 +42,9 @@ int main() {
 
     RoomManager manager;
     BookingManager bookingManager;
+    
+    PriorityQueue requestQueue;
+    ResourceAllocator allocator;
 
     // Add sample rooms
     manager.addRoom(
@@ -78,6 +84,9 @@ int main() {
         cout << "7. Add Booking\n";
         cout << "8. Display All Bookings\n";
         cout << "9. Total Booking Count\n";
+        cout << "10. Submit Allocation Request\n";
+        cout << "11. Process Allocation Requests\n";
+        cout << "12. Show Pending Request Count\n";
         cout << "0. Exit\n";
 
         cout << "\nEnter your choice: ";
@@ -290,6 +299,154 @@ int main() {
                 cout << "Total Bookings: "
                      << bookingManager.getTotalBookings()
                      << "\n";
+                break;
+
+            case 10: {
+                string requestId, purpose;
+                int capacity, projector, computers;
+                int startTime, endTime, priority;
+                string startText, endText;
+
+                cout << "\n===== SUBMIT ALLOCATION REQUEST =====\n";
+
+                cout << "Enter Request ID: ";
+                getline(cin, requestId);
+
+                cout << "Enter Purpose: ";
+                getline(cin, purpose);
+
+                cout << "Required Capacity: ";
+
+                if (!(cin >> capacity) || capacity <= 0) {
+                    cout << "Invalid capacity!\n";
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    break;
+                }
+
+                cout << "Needs Projector? (1=Yes, 0=No): ";
+
+                if (!(cin >> projector) ||
+                    (projector != 0 && projector != 1)) {
+                    cout << "Invalid input!\n";
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    break;
+                }
+
+                cout << "Needs Computers? (1=Yes, 0=No): ";
+
+                if (!(cin >> computers) ||
+                    (computers != 0 && computers != 1)) {
+                    cout << "Invalid input!\n";
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    break;
+                }
+
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+                cout << "Start Time (HH:MM): ";
+                getline(cin, startText);
+
+                cout << "End Time (HH:MM): ";
+                getline(cin, endText);
+
+                if (!parseTime(startText, startTime) ||
+                    !parseTime(endText, endTime) ||
+                    startTime >= endTime) {
+                    cout << "Invalid time!\n";
+                    break;
+                }
+
+                cout << "Priority (1=Low, 2=Medium, 3=High, "
+                    << "4=Urgent, 5=Critical): ";
+
+                if (!(cin >> priority) || priority < 1 || priority > 5) {
+                    cout << "Invalid priority!\n";
+                    cin.clear();
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    break;
+                }
+
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+                AllocationRequest request(
+                    requestId,
+                    purpose,
+                    capacity,
+                    projector == 1,
+                    computers == 1,
+                    startTime,
+                    endTime,
+                    priority
+                );
+
+                requestQueue.push(request);
+
+                cout << "Allocation request submitted successfully!\n";
+
+                break;
+            }
+
+            case 11: {
+
+                if (requestQueue.empty()) {
+                    cout << "No pending allocation requests!\n";
+                    break;
+                }
+
+                cout << "\n===== PROCESSING ALLOCATION REQUESTS =====\n";
+
+                while (!requestQueue.empty()) {
+
+                    AllocationRequest request = requestQueue.top();
+                    requestQueue.pop();
+
+                    cout << "\nProcessing Request: "
+                        << request.getRequestId() << "\n";
+
+                    cout << "Priority: "
+                        << request.getPriority() << "\n";
+
+                    string selectedRoom = allocator.findBestRoom(
+                        request,
+                        manager,
+                        bookingManager
+                    );
+
+                    if (selectedRoom.empty()) {
+                        cout << "Allocation failed: No suitable room available!\n";
+                        continue;
+                    }
+
+                    // Save the allocation as a booking so that
+                    // subsequent requests see this room as occupied.
+                    Booking allocatedBooking(
+                        request.getRequestId(),
+                        selectedRoom,
+                        request.getPurpose(),
+                        request.getStartTime(),
+                        request.getEndTime()
+                    );
+
+                    if (bookingManager.addBooking(allocatedBooking)) {
+                        cout << "Room allocated successfully: "
+                            << selectedRoom << "\n";
+                    }
+                    else {
+                        cout << "Allocation failed while saving booking!\n";
+                    }
+                }
+
+                cout << "\nAll pending requests processed.\n";
+
+                break;
+            }
+
+            case 12:
+                cout << "Pending Requests: "
+                     << requestQueue.size() << "\n";
                 break;
 
             case 0:

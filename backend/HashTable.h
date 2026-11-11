@@ -179,6 +179,24 @@ public:
         totalRooms = 0;
     }
 
+    // Get a copy of all rooms
+    vector<Room> getAllRooms() const {
+
+        vector<Room> allRooms;
+
+        for (Node* head : buckets) {
+
+            Node* current = head;
+
+            while (current != nullptr) {
+                allRooms.push_back(current->data);
+                current = current->next;
+            }
+        }
+
+        return allRooms;
+    }
+
 };
 
 #endif

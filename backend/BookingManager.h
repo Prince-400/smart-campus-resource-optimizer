@@ -16,6 +16,12 @@ public:
     bool addBooking(const Booking& booking);
     void displayAllBookings() const;
     int getTotalBookings() const;
+    
+    bool hasConflict(
+        const string& roomId,
+        int startTime,
+        int endTime
+    );
 };
 
 #endif

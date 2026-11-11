@@ -1,4 +1,3 @@
-
 cmake_minimum_required(VERSION 3.16)
 
 project(SmartCampusOptimizer)
@@ -10,4 +9,5 @@ add_executable(SmartCampus
     backend/main.cpp
     backend/RoomManager.cpp
     backend/BookingManager.cpp
+    backend/ResourceAllocator.cpp
 )

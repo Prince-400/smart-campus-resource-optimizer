@@ -79,3 +79,8 @@ bool RoomManager::deleteRoom(const string& id) {
 int RoomManager::getTotalRooms() const {
     return rooms.size();
 }
+
+
+vector<Room> RoomManager::getAllRooms() const {
+    return rooms.getAllRooms();
+}

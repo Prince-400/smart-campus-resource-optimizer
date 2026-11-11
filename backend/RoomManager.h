@@ -4,6 +4,7 @@
 
 #include "HashTable.h"
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -26,6 +27,9 @@ public:
     bool deleteRoom(const string& id);
 
     int getTotalRooms() const;
+
+    // New method for resource allocation
+    vector<Room> getAllRooms() const;
 };
 
 #endif
