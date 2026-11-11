@@ -4,18 +4,13 @@
 // Add a new room
 bool RoomManager::addRoom(const Room& room) {
 
-    // Check duplicate room ID
-    for (const Room& r : rooms) {
-        if (r.getRoomId() == room.getRoomId()) {
-            cout << "Room ID already exists!\n";
-            return false;
-        }
+    if (rooms.insert(room)) {
+        cout << "Room added successfully!\n";
+        return true;
     }
 
-    rooms.push_back(room);
-
-    cout << "Room added successfully!\n";
-    return true;
+    cout << "Room ID already exists!\n";
+    return false;
 }
 
 // Display all rooms
@@ -26,21 +21,18 @@ void RoomManager::displayAllRooms() const {
         return;
     }
 
-    for (const Room& room : rooms) {
-        room.displayRoom();
-    }
+    rooms.displayAll();
 }
 
 // Search room by ID
 bool RoomManager::searchRoom(const string& id) const {
 
-    for (const Room& room : rooms) {
+    Room* room = rooms.search(id);
 
-        if (room.getRoomId() == id) {
-            cout << "\nRoom found!\n";
-            room.displayRoom();
-            return true;
-        }
+    if (room != nullptr) {
+        cout << "\nRoom found!\n";
+        room->displayRoom();
+        return true;
     }
 
     cout << "\nRoom not found!\n";
@@ -58,33 +50,25 @@ bool RoomManager::updateRoom(
         return false;
     }
 
-    for (Room& room : rooms) {
+    Room* room = rooms.search(id);
 
-        if (room.getRoomId() == id) {
-            room.setCapacity(newCapacity);
-
-            cout << "Room updated successfully!\n";
-            return true;
-        }
+    if (room == nullptr) {
+        cout << "Room not found!\n";
+        return false;
     }
 
-    cout << "Room not found!\n";
-    return false;
+    room->setCapacity(newCapacity);
+
+    cout << "Room updated successfully!\n";
+    return true;
 }
 
 // Delete room
 bool RoomManager::deleteRoom(const string& id) {
 
-    for (auto it = rooms.begin();
-         it != rooms.end(); ++it) {
-
-        if (it->getRoomId() == id) {
-
-            rooms.erase(it);
-
-            cout << "Room deleted successfully!\n";
-            return true;
-        }
+    if (rooms.remove(id)) {
+        cout << "Room deleted successfully!\n";
+        return true;
     }
 
     cout << "Room not found!\n";
@@ -93,5 +77,5 @@ bool RoomManager::deleteRoom(const string& id) {
 
 // Get total rooms
 int RoomManager::getTotalRooms() const {
-    return static_cast<int>(rooms.size());
+    return rooms.size();
 }

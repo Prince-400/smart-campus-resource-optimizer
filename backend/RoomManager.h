@@ -2,15 +2,14 @@
 #ifndef ROOM_MANAGER_H
 #define ROOM_MANAGER_H
 
-#include "Room.h"
-#include <vector>
+#include "HashTable.h"
 #include <string>
 
 using namespace std;
 
 class RoomManager {
 private:
-    vector<Room> rooms;
+    HashTable rooms;
 
 public:
     bool addRoom(const Room& room);
