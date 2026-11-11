@@ -9,6 +9,5 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(SmartCampus
     backend/main.cpp
     backend/RoomManager.cpp
+    backend/BookingManager.cpp
 )
-
-target_include_directories(SmartCampus PRIVATE backend)

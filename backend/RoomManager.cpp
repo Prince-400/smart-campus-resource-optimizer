@@ -5,11 +5,11 @@
 bool RoomManager::addRoom(const Room& room) {
 
     if (rooms.insert(room)) {
-        cout << "Room added successfully!\n";
+        cout << "Room " <<  room.getRoomId() << " added successfully!\n";
         return true;
     }
 
-    cout << "Room ID already exists!\n";
+    cout << "Room " <<  room.getRoomId() << " ID already exists!\n";
     return false;
 }
 
